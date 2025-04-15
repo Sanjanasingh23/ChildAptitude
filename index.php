@@ -111,8 +111,10 @@ require_once 'config/db_config.php';
     </div>
     
     <?php include 'includes/footer.php'; ?>
-    <?php include 'includes/chatbot.php'; ?>
-    
+    <?php 
+    include 'includes/chatbot.php'; 
+    ?> 
+
     <!-- Modal for Login/Register -->
     <div class="modal" id="auth-modal">
         <div class="modal-content">

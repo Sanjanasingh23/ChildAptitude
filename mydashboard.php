@@ -54,7 +54,7 @@ $count_row = $count_result->fetch_assoc();
 $total_tests = $count_row['total_tests'];
 $stmt->close();
 
-// Get skill scores for pie chart
+// Get skill scores for radar chart
 $sql = "SELECT sc.skill_name, us.score 
         FROM user_skills us
         JOIN skill_categories sc ON us.skill_id = sc.skill_id
@@ -79,20 +79,63 @@ $stmt->close();
 $skill_labels_json = json_encode($skill_labels);
 $skill_scores_json = json_encode($skill_scores);
 
-// Get recommended next tests
-$sql = "SELECT tt.type_id, tt.test_name, tt.description, ac.age_range 
-        FROM test_types tt
-        JOIN age_categories ac ON tt.category_id = ac.category_id
-        WHERE ac.age_range LIKE CONCAT('%', ?, '%')
-        AND tt.type_id NOT IN (
-            SELECT test_type_id FROM test_attempts WHERE user_id = ?
-        )
-        LIMIT 4";  // Increased to show more in scrollable area
+// Get recommended next tests with skill information
+$sql = "SELECT 
+            tt.type_id, 
+            tt.test_name, 
+            tt.description, 
+            ac.age_range,
+            GROUP_CONCAT(DISTINCT sc.skill_name ORDER BY sc.skill_name SEPARATOR ', ') AS skills_tested
+        FROM 
+            test_types tt
+        JOIN 
+            age_categories ac ON tt.category_id = ac.category_id
+        LEFT JOIN 
+            questions q ON q.test_type_id = tt.type_id
+        LEFT JOIN 
+            question_skills qs ON qs.question_id = q.question_id
+        LEFT JOIN 
+            skill_categories sc ON sc.skill_id = qs.skill_id
+        WHERE 
+            ac.age_range LIKE CONCAT('%', ?, '%')
+            AND tt.type_id NOT IN (
+                SELECT test_type_id FROM test_attempts WHERE user_id = ?
+            )
+        GROUP BY 
+            tt.type_id
+        LIMIT 4";
 $stmt = $conn->prepare($sql);
 $childAge = $user['child_age'];
 $stmt->bind_param("ii", $childAge, $user_id);
 $stmt->execute();
 $recommended_tests = $stmt->get_result();
+$stmt->close();
+
+// Get strongest and weakest skills
+$sql = "SELECT sc.skill_name, us.score 
+        FROM user_skills us
+        JOIN skill_categories sc ON us.skill_id = sc.skill_id
+        WHERE us.user_id = ?
+        ORDER BY us.assessment_date DESC, us.score DESC
+        LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$strongest_skill_result = $stmt->get_result();
+$strongest_skill = $strongest_skill_result->fetch_assoc();
+$stmt->close();
+
+$sql = "SELECT sc.skill_name, us.score 
+        FROM user_skills us
+        JOIN skill_categories sc ON us.skill_id = sc.skill_id
+        WHERE us.user_id = ?
+        ORDER BY us.assessment_date DESC, us.score ASC
+        LIMIT 1";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$weakest_skill_result = $stmt->get_result();
+$weakest_skill = $weakest_skill_result->fetch_assoc();
 $stmt->close();
 ?>
 
@@ -366,6 +409,16 @@ $stmt->close();
             color: #666;
         }
         
+        .recommended-test .skills-tested {
+            padding: 5px 8px;
+            background-color: #e3f2fd;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1976d2;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
         .start-test-btn {
             background-color: #4e73df;
             color: white;
@@ -396,10 +449,68 @@ $stmt->close();
             font-size: 14px;
         }
         
+        /* Skill insights section */
+        .skill-insights {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 15px;
+        }
+        
+        .skill-insight-card {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .strongest-skill {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .weakest-skill {
+            background-color: #fff8e1;
+            border-left: 4px solid #FFC107;
+        }
+        
+        .skill-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .skill-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .skill-score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .strongest-score {
+            color: #388e3c;
+        }
+        
+        .weakest-score {
+            color: #f57c00;
+        }
+        
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
                 grid-auto-rows: 350px;
+            }
+            
+            .skill-insights {
+                flex-direction: column;
             }
         }
     </style>
@@ -427,9 +538,9 @@ $stmt->close();
                     <div class="stats-container">
                         <div class="stat-item">
                             <div class="stat-label">Average Score</div>
-                            <div class="stat-number avg-score"><?php echo $avg_score; ?>%</div>
+                            <div class="stat-number avg-score"><?php echo $avg_score ? $avg_score : '0'; ?>%</div>
                             <div class="stat-progress">
-                                <div class="progress-bar" style="width: <?php echo $avg_score; ?>%"></div>
+                                <div class="progress-bar" style="width: <?php echo $avg_score ? $avg_score : '0'; ?>%"></div>
                             </div>
                         </div>
                         <div class="stat-item">
@@ -458,6 +569,21 @@ $stmt->close();
                             <div class="stat-detail">Total time learning</div>
                         </div>
                     </div>
+                    
+                    <?php if($strongest_skill && $weakest_skill): ?>
+                    <div class="skill-insights">
+                        <div class="skill-insight-card strongest-skill">
+                            <div class="skill-title">Strongest Skill</div>
+                            <div class="skill-name"><?php echo htmlspecialchars($strongest_skill['skill_name']); ?></div>
+                            <div class="skill-score strongest-score"><?php echo $strongest_skill['score']; ?>%</div>
+                        </div>
+                        <div class="skill-insight-card weakest-skill">
+                            <div class="skill-title">Needs Improvement</div>
+                            <div class="skill-name"><?php echo htmlspecialchars($weakest_skill['skill_name']); ?></div>
+                            <div class="skill-score weakest-score"><?php echo $weakest_skill['score']; ?>%</div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
             
@@ -534,6 +660,11 @@ $stmt->close();
                             <div class="recommended-test">
                                 <h4><?php echo htmlspecialchars($test['test_name']); ?></h4>
                                 <p><?php echo htmlspecialchars($test['description']); ?></p>
+                                <?php if(!empty($test['skills_tested'])): ?>
+                                <div class="skills-tested">
+                                    <i class="fas fa-graduation-cap"></i> Skills Tested: <?php echo htmlspecialchars($test['skills_tested']); ?>
+                                </div>
+                                <?php endif; ?>
                                 <p><small><i class="fas fa-child"></i> Age Range: <?php echo htmlspecialchars($test['age_range']); ?></small></p>
                                 <button class="start-test-btn" onclick="startNewTest(<?php echo $test['type_id']; ?>)">
                                     <i class="fas fa-play"></i> Start Test
@@ -561,7 +692,7 @@ $stmt->close();
         document.addEventListener('DOMContentLoaded', function() {
             var ctx = document.getElementById('skillsChart').getContext('2d');
             var skillsChart = new Chart(ctx, {
-                type: 'radar', // Changed to radar chart for better skill visualization
+                type: 'radar', 
                 data: {
                     labels: <?php echo $skill_labels_json; ?>,
                     datasets: [{

@@ -8,10 +8,10 @@
             <div class="footer-links">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#home">Home</a></li>
+                    <li><a href="index.php">Home</a></li>
                     <li><a href="index.php#categories">Tests</a></li>
-                    <li><a href="#about">About Us</a></li>
-                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="about.php">About Us</a></li>
+                    <li><a href="contact.php">Contact Us</a></li>
                     <li><a href="#privacy">Privacy Policy</a></li>
                 </ul>
             </div>

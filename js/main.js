@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('register-form');
     const loginSubmit = document.getElementById('login-submit');
     const registerSubmit = document.getElementById('register-submit');
-    
     // Modal toggle functions
     if (loginBtn) {
         loginBtn.addEventListener('click', function() {

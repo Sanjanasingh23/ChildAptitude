@@ -443,6 +443,7 @@ $stmt->close();
         .dashboard-footer {
             text-align: center;
             margin-top: 40px;
+            margin-bottom: 10px;
             padding-top: 20px;
             border-top: 1px solid #eee;
             color: #888;
@@ -513,6 +514,21 @@ $stmt->close();
                 flex-direction: column;
             }
         }
+
+        .feedback-btn {
+    background-color:rgb(0, 64, 255);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    }
+
+    .feedback-btn:hover {
+        background-color: #375abc;
+    }
     </style>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -681,6 +697,16 @@ $stmt->close();
         <div class="dashboard-footer">
             <p>KidGenius - Helping children discover their unique talents</p>
         </div>
+
+        <div class="dashboard-card">
+    <div class="card-header">
+        <h3><i class="fas fa-comment-dots"></i> Feedback</h3>
+    </div>
+    <div class="card-content">
+        <p>We value your feedback! Let us know how we can improve your experience.</p>
+        <button class="feedback-btn" onclick="window.location.href='feedback.php'">Give Feedback</button>
+    </div>
+</div>
     </div>
     
     <?php include 'includes/footer.php'; ?>

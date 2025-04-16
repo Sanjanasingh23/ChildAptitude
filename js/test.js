@@ -1,26 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Test variables
     let currentTest = null;
+    let currentCategoryId = null;
     let currentQuestions = [];
     let currentQuestionIndex = 0;
     let userAnswers = [];
 
-    // Get all category cards (assuming you have these)
+    // DOM elements for exit confirmation
+   
+
+    // Get all category cards
     const categoryCards = document.querySelectorAll('.category-card');
     const testContainer = document.getElementById('test-interface');
     const resultsContainer = document.getElementById('results-page');
 
-    // Overlay elements
-    const testExitOverlay = document.getElementById('test-exit-overlay');
-    const closeTestExit = document.getElementById('close-test-exit');
-    const confirmTestExit = document.getElementById('confirm-test-exit');
-    const cancelTestExit = document.getElementById('cancel-test-exit');
-
-    // Add click event to each category card (if applicable)
+    // Add click event to each category card
     categoryCards.forEach(card => {
         const startButton = card.querySelector('.start-btn');
         if (startButton) {
-            startButton.addEventListener('click', function() {
+            startButton.addEventListener('click', function () {
                 const categoryId = card.getAttribute('data-age');
                 startTest(categoryId);
             });
@@ -28,23 +26,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Function to start a test
-    window.startTest = function(categoryId) {
+    window.startTest = function (categoryId) {
         console.log('Starting test for category:', categoryId);
 
-        // Add 'test-active' class to the body
-        document.body.classList.add('test-active');
-
+        // Fetch test data from server
         fetch(`api/test_data.php?category=${encodeURIComponent(categoryId)}`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) { // Improved error handling
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('API Response:', data);
+
                 if (data.success) {
+                    // Ensure the test object and questions array exist
                     if (!data.test || !data.test.questions || !Array.isArray(data.test.questions)) {
-                        alert('No questions available for this test.');
+                        console.error('Invalid test data received:', data);
+                        alert('No tests or questions available for this category. Please try again later.');
                         return;
                     }
 
+                    // Assign test and questions data
                     currentTest = data.test;
                     currentQuestions = data.test.questions;
+                    console.log('Current Questions:', currentQuestions);
 
                     // Hide categories section
                     const categoriesSection = document.getElementById('categories');
@@ -52,12 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         categoriesSection.style.display = 'none';
                     }
 
+                    // Display test interface
                     displayTest();
 
-                    // Show test container and add 'active' class
+                    // Show test container
                     if (testContainer) {
                         testContainer.style.display = 'block';
-                        testContainer.classList.add('active'); // Optional: Highlight
                         testContainer.scrollIntoView({
                             behavior: 'smooth'
                         });
@@ -67,8 +74,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
+                console.error('Fetch Error:', error);
+                alert('Failed to fetch test data: ' + error.message);
             });
     };
 
@@ -83,8 +90,14 @@ document.addEventListener('DOMContentLoaded', function() {
             testHeader.innerHTML = `
                 <h2>${currentTest.test_name}</h2>
                 <p>Question <span id="current-question">${currentQuestionIndex + 1}</span> of <span id="total-questions">${currentQuestions.length}</span></p>
-                <button class="nav-btn" id="exit-test-btn">Exit Test</button>
+                <button class="nav-btn" id="exit-test-btn">Exit Test</button> 
             `;
+
+            // Add click event to the Exit Test button (ensure it's added here)
+            const exitTestBtn = document.getElementById('exit-test-btn');
+            if (exitTestBtn) {
+                exitTestBtn.addEventListener('click', showExitConfirmation);
+            }
         }
 
         // Get current question
@@ -107,18 +120,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add click event to options
         const options = questionContainer ? questionContainer.querySelectorAll('.option') : [];
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                const index = parseInt(this.getAttribute('data-index'));
-                userAnswers[currentQuestionIndex] = index;
+        if (options) {
+            options.forEach(option => {
+                option.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    userAnswers[currentQuestionIndex] = index;
 
-                // Remove 'selected' class from all options
-                options.forEach(opt => opt.classList.remove('selected'));
+                    // Remove 'selected' class from all options
+                    options.forEach(opt => opt.classList.remove('selected'));
 
-                // Add 'selected' class to clicked option
-                this.classList.add('selected');
+                    // Add 'selected' class to clicked option
+                    this.classList.add('selected');
+                });
             });
-        });
+        }
 
         // Update navigation buttons
         if (navigationButtons) {
@@ -133,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add click event to navigation buttons
         const prevBtn = navigationButtons ? navigationButtons.querySelector('#prev-btn') : null;
         if (prevBtn) {
-            prevBtn.addEventListener('click', function() {
+            prevBtn.addEventListener('click', function () {
                 if (currentQuestionIndex > 0) {
                     currentQuestionIndex--;
                     displayTest();
@@ -143,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const nextBtn = navigationButtons ? navigationButtons.querySelector('#next-btn') : null;
         if (nextBtn) {
-            nextBtn.addEventListener('click', function() {
+            nextBtn.addEventListener('click', function () {
                 if (currentQuestionIndex < currentQuestions.length - 1) {
                     currentQuestionIndex++;
                     displayTest();
@@ -153,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const submitBtn = navigationButtons ? navigationButtons.querySelector('#submit-btn') : null;
         if (submitBtn) {
-            submitBtn.addEventListener('click', function() {
+            submitBtn.addEventListener('click', function () {
                 // Check if all questions are answered
                 const unanswered = userAnswers.findIndex(answer => answer === null);
 
@@ -168,12 +183,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Submit test
                 submitTest();
             });
-        }
-
-        // Add click event to the "Exit Test" button
-        const exitTestBtn = document.getElementById('exit-test-btn');
-        if (exitTestBtn) {
-            exitTestBtn.addEventListener('click', showExitConfirmation);
         }
     }
 
@@ -200,7 +209,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify(testData),
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) { // Improved error handling
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Submit Test Response:', data);
 
@@ -225,8 +239,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
+                console.error('Fetch Error:', error);
+                alert('Failed to submit test: ' + error.message);
             });
     }
 
@@ -278,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (actionButtons) {
             actionButtons.innerHTML = `
                 <button class="action-btn" id="retry-btn">Try Another Test</button>
-                <button class="action-btn certificate-btn" id="certificate-btn">Get Certificate</button>
+                <button class="action-btn certificate-btn" id="certificate-btn">Give Feedback</button>
                 <button class="action-btn" id="share-btn">Share Results</button>
             `;
         }
@@ -286,30 +300,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add click event to action buttons
         const retryBtn = actionButtons ? actionButtons.querySelector('#retry-btn') : null;
         if (retryBtn) {
-            retryBtn.addEventListener('click', function() {
+            retryBtn.addEventListener('click', function () {
                 if (resultsContainer) {
                     resultsContainer.style.display = 'none';
                 }
                 const categoriesSection = document.getElementById('categories');
                 if (categoriesSection) {
                     categoriesSection.style.display = 'block';
-                    categoriesSection.scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    categoriesSection.scrollIntoView({ behavior: 'smooth' });
                 }
             });
         }
 
-        const certificateBtn = actionButtons ? actionButtons.querySelector('#certificate-btn') : null;
-        if (certificateBtn) {
-            certificateBtn.addEventListener('click', function() {
-                window.open(`api/certificate.php?result_id=${results.result_id}`, '_blank');
+        const feedbackBtn = actionButtons ? actionButtons.querySelector('#certificate-btn') : null;
+        if (feedbackBtn) {
+            feedbackBtn.addEventListener('click', function () {
+                window.open(`feedback.php`, '_blank');
             });
         }
 
         const shareBtn = actionButtons ? actionButtons.querySelector('#share-btn') : null;
         if (shareBtn) {
-            shareBtn.addEventListener('click', function() {
+            shareBtn.addEventListener('click', function () {
                 if (navigator.share) {
                     navigator.share({
                         title: 'My KidGenius Test Results',
@@ -338,15 +350,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Check for category in URL and start test if present (if needed)
+    // Check for category in URL and start test if present
     const urlParams = new URLSearchParams(window.location.search);
     const category = urlParams.get('category');
 
     if (category) {
         startTest(category);
     }
-
-    // --- Exit Test Logic (Option 1) ---
+    
+    // Function to show the exit confirmation overlay
+    const testExitOverlay = document.getElementById('test-exit-overlay');
+    const closeTestExit = document.getElementById('close-test-exit');
+    const cancelTestExit = document.getElementById('cancel-test-exit');
+    const confirmTestExit = document.getElementById('confirm-test-exit');
 
     // Function to show the exit confirmation overlay
     function showExitConfirmation() {

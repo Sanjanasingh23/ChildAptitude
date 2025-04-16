@@ -86,22 +86,22 @@ require_once 'config/db_config.php';
             <h2>Why Choose KidGenius?</h2>
             <div class="feature-grid">
                 <div class="feature-item">
-                    <!-- <img src="images/scientific.jpg" alt="Scientific Approach"> -->
+                    <img src="images/scientific.jpg" alt="Scientific Approach">
                     <h3>Scientific Approach</h3>
                     <p>Our tests are designed by child psychologists and education experts to accurately measure various aptitudes.</p>
                 </div>
                 <div class="feature-item">
-                    <!-- <img src="images/age-appropriate.jpg" alt="Age-Appropriate"> -->
+                    <img src="images/age-appropriate.jpg" alt="Age-Appropriate">
                     <h3>Age-Appropriate Design</h3>
                     <p>Each test is carefully tailored to be engaging and appropriate for different developmental stages.</p>
                 </div>
                 <div class="feature-item">
-                    <!-- <img src="images/reports.jpg" alt="Detailed Reports"> -->
+                    <img src="images/report.jpg" alt="Detailed Reports">
                     <h3>Detailed Reports</h3>
                     <p>Receive comprehensive insights about your child's strengths, talents, and areas for growth.</p>
                 </div>
                 <div class="feature-item">
-                    <!-- <img src="images/fun.jpg" alt="Fun Learning"> -->
+                    <img src="images/fun.jpg" alt="Fun Learning">
                     <h3>Fun Learning Experience</h3>
                     <p>Children enjoy our interactive and colorful tests that feel more like games than assessments.</p>
                 </div>
@@ -111,7 +111,7 @@ require_once 'config/db_config.php';
                     <p>Monitor development over time with our easy-to-understand progress charts and comparisons.</p>
                 </div>
                 <div class="feature-item">
-                    <!-- <img src="images/guidance.jpg" alt="Expert Guidance"> -->
+                    <img src="images/expert.jpg" alt="Expert Guidance">
                     <h3>Expert Guidance</h3>
                     <p>Get personalized recommendations for activities that can help develop your child's unique talents.</p>
                 </div>

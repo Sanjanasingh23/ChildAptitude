@@ -710,7 +710,6 @@ $stmt->close();
     </div>
     
     <?php include 'includes/footer.php'; ?>
-    <?php include 'includes/chatbot.php'; ?>
     
     <script>
         // Initialize skills chart if data exists

@@ -106,7 +106,7 @@ require_once 'config/db_config.php';
                     <p>Children enjoy our interactive and colorful tests that feel more like games than assessments.</p>
                 </div>
                 <div class="feature-item">
-                    <!-- <img src="images/tracking.jpg" alt="Progress Tracking"> -->
+                    <img src="images/progress.jpg" alt="Progress Tracking">
                     <h3>Progress Tracking</h3>
                     <p>Monitor development over time with our easy-to-understand progress charts and comparisons.</p>
                 </div>
@@ -120,9 +120,6 @@ require_once 'config/db_config.php';
     </div>
     
     <?php include 'includes/footer.php'; ?>
-    <?php 
-    include 'includes/chatbot.php'; 
-    ?> 
 
     <!-- Modal for Login/Register -->
     <div class="modal" id="auth-modal">

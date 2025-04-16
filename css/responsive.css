@@ -84,3 +84,42 @@
         right: -20px;
     }
 }
+
+
+#exit-test-btn {
+    /* Style the Exit Test button to match your other navigation buttons */
+    background-color: #f44336; /* Or any color you prefer */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px; /* Add some spacing */
+    margin-top: 10px;
+}
+
+#exit-test-btn:hover {
+    background-color: #d32f2f;
+}
+
+body.test-active {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed; /* Add this to prevent any background shifting */
+    /* width: 100%;       Ensure it covers the full width */
+}
+
+#test-interface.active {
+    /* Styles to highlight and center the test container */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    position: fixed; /* Change to fixed */
+    top: 50%;       /* Center vertically */
+    left: 50%;      /* Center horizontally */
+    transform: translate(-50%, -50%); /* Precise centering */
+    width: 80vw;   /* Changed to width: 80vw */
+    max-height: 80%; /* Optional: Limit height */
+    overflow: auto;  /* Allow scrolling within test container */
+}

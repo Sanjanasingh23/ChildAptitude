@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@200..900');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.contact-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.contact-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: url('../images/back.jpg') no-repeat center center/cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-item {
+    width: 100%;
+    height: 550px;
+    max-width: 820px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 10px rgb(0, 0, 0, .4);
+    overflow: hidden;
+    grid-template-columns: repeat(2, 1fr);
+    display: grid;
+    z-index: 1000;
+}
+
+.contact-contact {
+    background: rgb(255, 255, 255);
+}
+
+.contact-submit-form {
+    background: #8d66b1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.contact-firsttext {
+    color: #8f50ec;
+    padding-left: 20px;
+    padding-top: 20px;
+    font-size: 35px;
+    font-weight: 600;
+}
+
+.contact-image {
+    height: 320px;
+    width: 320px;
+}
+
+.contact-social-media {
+    display: flex;
+    list-style: none;
+}
+
+.contact-social-media li {
+    padding-left: 15px;
+    font-size: 24px;
+    margin-top: 10px;
+}
+
+.contact-social-media i {
+    background: #8d66b1;
+    padding: 5px;
+    border-radius: 5px;
+    transition: .3s;
+    color: white;
+}
+
+.contact-social-media i:hover {
+    background: white;
+    color: #8f50ec;
+}
+
+.contact-social-media a {
+    text-decoration: none;
+}
+
+.contact-secnd-text {
+    color: #8f50ec;
+    font-weight: 500;
+    padding-left: 10px;
+}
+
+.contact-third-text {
+    font-size: 25px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.contact-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-form-box-items {
+    width: 70%;
+    margin: 15px 0;
+    /* position: relative;  Remove this */
+    display: flex;       /* Add this for flexbox layout */
+    flex-direction: column; /* Add this to stack label and input */
+}
+
+.contact-form label {
+    /* position: absolute;  Remove this */
+    /* top: 50%;           Remove this */
+    /* left: 10px;          Remove this */
+    /* transform: translateY(-50%); Remove this */
+    font-size: 15px;
+    font-weight: 500;
+    color: white;
+    pointer-events: none;
+    transition: 0.3s;
+    margin-bottom: 5px;   /* Add spacing between label and input */
+    text-align: left;    /* Align label to the left */
+}
+
+.contact-input,
+.contact-textarea {
+    width: 100%;
+    padding: 12px 10px;  /* Increase vertical padding */
+    border-radius: 10px;
+    border: 2px solid white;
+    outline: none;
+    font-size: 16px;
+    margin: 5px;
+    background: transparent;
+    color: white;
+    height: 50px;      /* Add a fixed height */
+    box-sizing: border-box; /* Include padding in height/width */
+}
+
+.contact-textarea {
+    height: auto;       /* Reset height for textarea */
+    min-height: 100px;   /* Minimum height for textarea */
+    resize: vertical;
+}
+
+.contact-input:focus ~ label,
+.contact-input:valid ~ label,
+.contact-textarea:focus ~ label,
+.contact-textarea:valid ~ label {
+    /* position: absolute;   Remove this */
+    /* top: -10px;          Remove this */
+    /* left: 10px;          Remove this */
+    background: #8d66b1;
+    padding: 0 5px;
+    font-size: 12px;
+    transform: translateY(0); /* Reset the transform */
+    top: 0;                /* Reset top */
+}
+
+.contact-submit-button {
+    width: 50%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #8f50ec;
+    font-size: 16px;
+    background: white;
+    color: #8f50ec;
+    transition: background 0.3s, color 0.3s;
+}
+
+.contact-submit-button:hover {
+    background: #7036c6;
+    color: white;
+}
+
+.contact-textarea {
+    resize: horizontal;
+}

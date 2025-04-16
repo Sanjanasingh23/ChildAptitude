@@ -62,6 +62,15 @@ require_once 'config/db_config.php';
     <div class="test-header"></div>
     <div class="question-container"></div>
     <div class="navigation-buttons"></div>
+
+    <div id="test-exit-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 2001; align-items: center; justify-content: center;">
+        <div style="background-color: white; padding: 20px; border-radius: 10px; text-align: center;">
+            <span id="close-test-exit" style="position: absolute; top: 10px; right: 10px; font-size: 1.5em; cursor: pointer;">&times;</span>
+            <p>Are you sure you want to exit the test? Your progress may not be saved.</p>
+            <button id="confirm-test-exit" style="padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Yes, Exit</button>
+            <button id="cancel-test-exit" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+        </div>
+    </div>
 </section>
         
         <!-- Results Container (Initially Hidden) -->

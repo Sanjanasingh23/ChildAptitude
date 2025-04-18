@@ -4,7 +4,6 @@ session_start();
 
 // Include database configuration
 require_once '../config/db_config.php';
-require_once '../includes/skill_utils.php';
 
 // Set header to JSON
 header('Content-Type: application/json');

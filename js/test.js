@@ -6,9 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentQuestionIndex = 0;
     let userAnswers = [];
 
-    // DOM elements for exit confirmation
-   
-
     // Get all category cards
     const categoryCards = document.querySelectorAll('.category-card');
     const testContainer = document.getElementById('test-interface');

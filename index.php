@@ -176,6 +176,6 @@ require_once 'config/db_config.php';
     
     <script src="js/main.js"></script>
     <script src="js/test.js"></script>
-    <script src="js/chatbot.js"></script>
+    
 </body>
 </html>
